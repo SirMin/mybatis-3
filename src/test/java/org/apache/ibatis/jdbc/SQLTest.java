@@ -1,30 +1,29 @@
 /**
- * Copyright 2009-2016 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Copyright 2009-2019 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.apache.ibatis.jdbc;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SQLTest {
+class SQLTest {
 
   @Test
-  public void shouldDemonstrateProvidedStringBuilder() {
+  void shouldDemonstrateProvidedStringBuilder() {
     //You can pass in your own StringBuilder
     final StringBuilder sb = new StringBuilder();
     //From the tutorial
@@ -43,7 +42,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldDemonstrateMixedStyle() {
+  void shouldDemonstrateMixedStyle() {
     //Mixed
     final String sql = new SQL() {{
       SELECT("id, name");
@@ -58,7 +57,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldDemonstrateFluentStyle() {
+  void shouldDemonstrateFluentStyle() {
     //Fluent Style
     final String sql = new SQL()
         .SELECT("id, name").FROM("PERSON A")
@@ -72,7 +71,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldProduceExpectedSimpleSelectStatement() {
+  void shouldProduceExpectedSimpleSelectStatement() {
     final String expected =
         "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME\n" +
             "FROM PERSON P\n" +
@@ -82,7 +81,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldProduceExpectedSimpleSelectStatementMissingFirstParam() {
+  void shouldProduceExpectedSimpleSelectStatementMissingFirstParam() {
     final String expected =
         "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME\n" +
             "FROM PERSON P\n" +
@@ -92,7 +91,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldProduceExpectedSimpleSelectStatementMissingFirstTwoParams() {
+  void shouldProduceExpectedSimpleSelectStatementMissingFirstTwoParams() {
     final String expected =
         "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME\n" +
             "FROM PERSON P\n" +
@@ -102,7 +101,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldProduceExpectedSimpleSelectStatementMissingAllParams() {
+  void shouldProduceExpectedSimpleSelectStatementMissingAllParams() {
     final String expected =
         "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME\n" +
             "FROM PERSON P\n" +
@@ -111,7 +110,7 @@ public class SQLTest {
   }
 
   @Test
-  public void shouldProduceExpectedComplexSelectStatement() {
+  void shouldProduceExpectedComplexSelectStatement() {
     final String expected =
         "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME, P.LAST_NAME, P.CREATED_ON, P.UPDATED_ON\n" +
             "FROM PERSON P, ACCOUNT A\n" +
@@ -166,7 +165,7 @@ public class SQLTest {
 
 
   @Test
-  public void variableLengthArgumentOnSelect() {
+  void variableLengthArgumentOnSelect() {
     final String sql = new SQL() {{
       SELECT("P.ID", "P.USERNAME");
     }}.toString();
@@ -175,7 +174,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnSelectDistinct() {
+  void variableLengthArgumentOnSelectDistinct() {
     final String sql = new SQL() {{
       SELECT_DISTINCT("P.ID", "P.USERNAME");
     }}.toString();
@@ -184,7 +183,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnFrom() {
+  void variableLengthArgumentOnFrom() {
     final String sql = new SQL() {{
       SELECT().FROM("TABLE_A a", "TABLE_B b");
     }}.toString();
@@ -193,7 +192,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnJoin() {
+  void variableLengthArgumentOnJoin() {
     final String sql = new SQL() {{
       SELECT().JOIN("TABLE_A b ON b.id = a.id", "TABLE_C c ON c.id = a.id");
     }}.toString();
@@ -203,7 +202,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnInnerJoin() {
+  void variableLengthArgumentOnInnerJoin() {
     final String sql = new SQL() {{
       SELECT().INNER_JOIN("TABLE_A b ON b.id = a.id", "TABLE_C c ON c.id = a.id");
     }}.toString();
@@ -213,7 +212,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnOuterJoin() {
+  void variableLengthArgumentOnOuterJoin() {
     final String sql = new SQL() {{
       SELECT().OUTER_JOIN("TABLE_A b ON b.id = a.id", "TABLE_C c ON c.id = a.id");
     }}.toString();
@@ -223,7 +222,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnLeftOuterJoin() {
+  void variableLengthArgumentOnLeftOuterJoin() {
     final String sql = new SQL() {{
       SELECT().LEFT_OUTER_JOIN("TABLE_A b ON b.id = a.id", "TABLE_C c ON c.id = a.id");
     }}.toString();
@@ -233,7 +232,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnRightOuterJoin() {
+  void variableLengthArgumentOnRightOuterJoin() {
     final String sql = new SQL() {{
       SELECT().RIGHT_OUTER_JOIN("TABLE_A b ON b.id = a.id", "TABLE_C c ON c.id = a.id");
     }}.toString();
@@ -243,7 +242,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnWhere() {
+  void variableLengthArgumentOnWhere() {
     final String sql = new SQL() {{
       SELECT().WHERE("a = #{a}", "b = #{b}");
     }}.toString();
@@ -252,7 +251,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnGroupBy() {
+  void variableLengthArgumentOnGroupBy() {
     final String sql = new SQL() {{
       SELECT().GROUP_BY("a", "b");
     }}.toString();
@@ -261,7 +260,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnHaving() {
+  void variableLengthArgumentOnHaving() {
     final String sql = new SQL() {{
       SELECT().HAVING("a = #{a}", "b = #{b}");
     }}.toString();
@@ -270,7 +269,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnOrderBy() {
+  void variableLengthArgumentOnOrderBy() {
     final String sql = new SQL() {{
       SELECT().ORDER_BY("a", "b");
     }}.toString();
@@ -279,7 +278,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnSet() {
+  void variableLengthArgumentOnSet() {
     final String sql = new SQL() {{
       UPDATE("TABLE_A").SET("a = #{a}", "b = #{b}");
     }}.toString();
@@ -289,7 +288,7 @@ public class SQLTest {
   }
 
   @Test
-  public void variableLengthArgumentOnIntoColumnsAndValues() {
+  void variableLengthArgumentOnIntoColumnsAndValues() {
     final String sql = new SQL() {{
       INSERT_INTO("TABLE_A").INTO_COLUMNS("a", "b").INTO_VALUES("#{a}", "#{b}");
     }}.toString();
@@ -300,8 +299,8 @@ public class SQLTest {
   }
 
   @Test
-  public void fixFor903UpdateJoins() {
+  void fixFor903UpdateJoins() {
     final SQL sql = new SQL().UPDATE("table1 a").INNER_JOIN("table2 b USING (ID)").SET("a.value = b.value");
-    assertThat(sql.toString(), CoreMatchers.equalTo("UPDATE table1 a\nINNER JOIN table2 b USING (ID)\nSET a.value = b.value"));
+    assertThat(sql.toString()).isEqualTo("UPDATE table1 a\nINNER JOIN table2 b USING (ID)\nSET a.value = b.value");
   }
 }

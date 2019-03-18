@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2019 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.scripting;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -22,87 +24,80 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.scripting.defaults.RawLanguageDriver;
 import org.apache.ibatis.session.Configuration;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.core.IsSame.sameInstance;
-import static org.junit.Assert.assertThat;
+import static com.googlecode.catchexception.apis.BDDCatchException.*;
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  * @author Kazuki Shimizu
  */
-public class LanguageDriverRegistryTest {
-
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+class LanguageDriverRegistryTest {
 
   private LanguageDriverRegistry registry = new LanguageDriverRegistry();
 
   @Test
-  public void registerByType() {
+  void registerByType() {
     registry.register(RawLanguageDriver.class);
     LanguageDriver driver = registry.getDriver(RawLanguageDriver.class);
 
-    assertThat(driver, instanceOf(RawLanguageDriver.class));
+    assertThat(driver).isInstanceOf(RawLanguageDriver.class);
   }
 
   @Test
-  public void registerByTypeSameType() {
+  void registerByTypeSameType() {
     registry.register(RawLanguageDriver.class);
     LanguageDriver driver = registry.getDriver(RawLanguageDriver.class);
 
     registry.register(RawLanguageDriver.class);
 
-    assertThat(driver, sameInstance(registry.getDriver(RawLanguageDriver.class)));
+    assertThat(driver).isSameAs(registry.getDriver(RawLanguageDriver.class));
   }
 
   @Test
-  public void registerByTypeNull() {
-    expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("null is not a valid Language Driver");
-    registry.register((Class<?>) null);
+  void registerByTypeNull() {
+    when(registry).register((Class<? extends LanguageDriver>) null);
+    then(caughtException()).isInstanceOf(IllegalArgumentException.class)
+      .hasMessage("null is not a valid Language Driver");
   }
 
   @Test
-  public void registerByTypeDoesNotCreateNewInstance() {
-    expectedException.expect(ScriptingException.class);
-    expectedException.expectMessage("Failed to load language driver for org.apache.ibatis.scripting.LanguageDriverRegistryTest$PrivateLanguageDriver");
-    registry.register(PrivateLanguageDriver.class);
+  void registerByTypeDoesNotCreateNewInstance() {
+    when(registry).register(PrivateLanguageDriver.class);
+    then(caughtException()).isInstanceOf(ScriptingException.class)
+      .hasMessage("Failed to load language driver for org.apache.ibatis.scripting.LanguageDriverRegistryTest$PrivateLanguageDriver");
   }
 
   @Test
-  public void registerByInstance() {
+  void registerByInstance() {
     registry.register(new PrivateLanguageDriver());
     LanguageDriver driver = registry.getDriver(PrivateLanguageDriver.class);
 
-    assertThat(driver, instanceOf(PrivateLanguageDriver.class));
+    assertThat(driver).isInstanceOf(PrivateLanguageDriver.class);
   }
 
   @Test
-  public void registerByInstanceSameType() {
+  void registerByInstanceSameType() {
     registry.register(new PrivateLanguageDriver());
     LanguageDriver driver = registry.getDriver(PrivateLanguageDriver.class);
 
     registry.register(new PrivateLanguageDriver());
 
-    assertThat(driver, sameInstance(registry.getDriver(PrivateLanguageDriver.class)));
+    assertThat(driver).isSameAs(registry.getDriver(PrivateLanguageDriver.class));
   }
 
   @Test
-  public void registerByInstanceNull() {
-    expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("null is not a valid Language Driver");
-    registry.register((LanguageDriver) null);
+  void registerByInstanceNull() {
+    when(registry).register((LanguageDriver) null);
+    then(caughtException()).isInstanceOf(IllegalArgumentException.class)
+      .hasMessage("null is not a valid Language Driver");
   }
 
   @Test
-  public void setDefaultDriverClass() {
+  void setDefaultDriverClass() {
     registry.setDefaultDriverClass(RawLanguageDriver.class);
-    assertThat(registry.getDefaultDriverClass() == RawLanguageDriver.class, is(true));
-    assertThat(registry.getDefaultDriver(), instanceOf(RawLanguageDriver.class));
+    assertThat(registry.getDefaultDriverClass() == RawLanguageDriver.class).isTrue();
+    assertThat(registry.getDefaultDriver()).isInstanceOf(RawLanguageDriver.class);
   }
 
   static private class PrivateLanguageDriver implements LanguageDriver {
